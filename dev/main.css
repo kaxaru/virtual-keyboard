@@ -1,0 +1,100 @@
+.wrapper {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.output {
+    width: 100%;
+    height: 300px;
+    margin: 10px auto;
+    font-size: 20px;
+    color:tomato; 
+    overflow: auto;
+}
+
+.keyboard {
+    width: 744px;
+    margin: 0 auto;
+    padding: 5px;
+    background-color: whitesmoke;
+    border: 3px solid black;
+    border-radius: 5px;
+}
+
+.keyboard section {
+    width: 100%;
+    height: 50px;
+    margin-bottom: 2px;
+    display: flex;
+}
+
+.keyboard .key {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    margin-left: 7px;
+    font-weight: 600;
+    color: white;
+    background: #847b74;
+    text-shadow: black 0px 0px 0.5rem;
+    user-select: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all .2s ease-in ;
+}
+
+.keyboard .key.active {
+    background-color: #8a60db;
+    border: 1px solid rgb(136, 139, 136);
+    transform: scale(1.1);
+    font-size: 24px;
+}
+
+.keyboard .backspace {
+    width: 120px;
+}
+
+.keyboard .Tab, 
+.keyboard .CapsLock  
+{
+    width: 75px
+}
+
+.keyboard .CapsLock {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.keyboard .LShift,
+.keyboard .RShift {
+    width: 105px;
+}
+
+.keyboard .Enter {
+    width: 115px
+}
+
+.keyboard .LCtrl,
+.keyboard .RCtrl {
+    width: 60px;
+}
+
+.keyboard .LAlt,
+.keyboard .RAlt {
+    width: 62px;
+}
+
+.keyboard .Space {
+    width: 210px
+}
+
+.keyboard .black {
+    background-color: black;
+}
+
+.keyboard .Del {
+    width: 57px
+}
+
