@@ -15,7 +15,7 @@ const refresh = () => {
   lang = localStorage.getItem('lang') === 'en' ? 'ru' : 'en';
   localStorage.setItem('lang', lang);
   const htmlToChar = (string) => (/&#/.test(string) ? String.fromCharCode(string.replace('&#', '')) : string);
-  fetch('../dev/keyboard.json', {
+  fetch('/dev/keyboard.json', {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -358,7 +358,7 @@ window.addEventListener('keyup', (e) => {
 
 const init = () => {
   lang = localStorage.getItem('lang') || 'en';
-  fetch('../dev/keyboard.json', {
+  fetch('/dev/keyboard.json', {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
