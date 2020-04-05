@@ -15,7 +15,12 @@ const refresh = () => {
   lang = localStorage.getItem('lang') === 'en' ? 'ru' : 'en';
   localStorage.setItem('lang', lang);
   const htmlToChar = (string) => (/&#/.test(string) ? String.fromCharCode(string.replace('&#', '')) : string);
-  fetch('../dev/keyboard.json').then((res) => res.json()).then((data) => {
+  fetch('../dev/keyboard.json', {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  }).then((res) => res.json()).then((data) => {
     const sections = Object.keys(data.Lang[lang]);
     sections.map((s) => {
       const keys = Object.keys(data.Lang[lang][s]);
@@ -87,15 +92,23 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
 
   const isActiveShiftOrCapsLock = () => {
     let capitalLetterEls = [];
+    let isCapitalLetters = false;
     LANGKEYS.map((k) => {
       capitalLetterEls = [...capitalLetterEls, ...document.querySelectorAll(`.key[data-key="${k}"]`)];
       return false;
     });
 
     for (let i = 0; i < capitalLetterEls.length; i += 1) {
-      if (capitalLetterEls[i].classList.contains('active')) { return true; }
+      if (capitalLetterEls[i].classList.contains('active')) {
+        if (+capitalLetterEls[i].getAttribute('data-key') === 16) {
+          isCapitalLetters = true;
+        }
+        if (+capitalLetterEls[i].getAttribute('data-key') === 20) {
+          isCapitalLetters = !isCapitalLetters;
+        }
+      }
     }
-    return false;
+    return isCapitalLetters;
   };
 
   let cursorPos; let
@@ -131,8 +144,10 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
         setCursorPos(output, cursorPos);
       } else {
         cursorPos = getCursorPos(output);
-        output.value = [...text.slice(0, cursorPos - 1), ...text.slice(cursorPos)].join('');
-        setCursorPos(output, cursorPos - 1);
+        if (cursorPos !== 0) {
+          output.value = [...text.slice(0, cursorPos - 1), ...text.slice(cursorPos)].join('');
+          setCursorPos(output, cursorPos - 1);
+        }
       }
       break;
     }
@@ -279,10 +294,12 @@ const keyHandling = (key) => {
 window.addEventListener('keydown', (e) => {
   e.preventDefault();
   let key;
+
   if (e.keyCode === 17 || e.keyCode === 18 || e.keyCode === 16) {
     key = e.location === 1
       ? document.querySelector(`.L${e.key}`)
-      : document.querySelector(`.R${e.key}`);
+      : e.key !== 'AltGraph' ? document.querySelector(`.R${e.key}`)
+        : document.querySelector('.RAlt');
   } else {
     key = document.querySelector(`div[data-key="${e.keyCode}"]`);
   }
@@ -307,7 +324,8 @@ window.addEventListener('keyup', (e) => {
   if (e.keyCode === 17 || e.keyCode === 18 || e.keyCode === 16) {
     key = e.location === 1
       ? document.querySelector(`.L${e.key}`)
-      : document.querySelector(`.R${e.key}`);
+      : e.key !== 'AltGraph' ? document.querySelector(`.R${e.key}`)
+        : document.querySelector('.RAlt');
   } else {
     key = document.querySelector(`div[data-key="${e.keyCode}"]`);
   }
@@ -323,7 +341,12 @@ window.addEventListener('keyup', (e) => {
 
 const init = () => {
   lang = localStorage.getItem('lang') || 'en';
-  fetch('../dev/keyboard.json').then((res) => res.json()).then((data) => {
+  fetch('../dev/keyboard.json', {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  }).then((res) => res.json()).then((data) => {
     const sections = Object.keys(data.Lang[lang]);
     let template = '';
     sections.map((s) => {
@@ -350,7 +373,9 @@ const init = () => {
     keys.map((key) => {
       key.addEventListener('mousedown', (e) => {
         e.preventDefault();
-        // const key = e.target;
+        if (e.target.nodeName === 'TEXTAREA') {
+          return false;
+        }
         keyUpNow.push(key);
         if (+key.getAttribute('data-key') !== 20) {
           key.classList.add('active');
@@ -363,6 +388,7 @@ const init = () => {
         } else {
           keyHandling(key);
         }
+        return false;
       });
 
       window.addEventListener('mouseup', (e) => {
@@ -373,10 +399,14 @@ const init = () => {
           }
           return false;
         });
+        if (e.target.nodeName === 'TEXTAREA') {
+          return false;
+        }
         if (key.classList.contains('system')) {
           systemKeyHandling(key, e.type, e.repeat);
         }
         keyUpNow = [];
+        return false;
       });
       return false;
     });
