@@ -111,6 +111,23 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
     return isCapitalLetters;
   };
 
+  const checkActiveSystemKeys = () => {
+    const systemKeys = document.querySelectorAll('.system.active');
+    let isSystemKeysChangeLang = false;
+    if (systemKeys > 3) {
+      return isSystemKeysChangeLang;
+    }
+    for (let i = 0; i < systemKeys.length; i += 1) {
+      if (systemKeys[i].classList.contains('LAlt') || systemKeys[i].classList.contains('LShift') || systemKeys[i].classList.contains('CapsLock')) {
+        isSystemKeysChangeLang = true;
+      } else {
+        isSystemKeysChangeLang = false;
+        break;
+      }
+    }
+    return isSystemKeysChangeLang;
+  };
+
   let cursorPos; let
     text;
   let newtext = [];
@@ -209,7 +226,7 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
       if (!eventRepeat && event === 'keydown') {
         if (key.getAttribute('data-direction') === 'left') {
           const leftAlt = document.querySelector('.LAlt');
-          if (leftAlt.classList.contains('active') && document.querySelectorAll('.system.active').length === 2) {
+          if (leftAlt.classList.contains('active') && checkActiveSystemKeys()) {
             refresh();
           }
         }
@@ -225,7 +242,7 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
       if (!eventRepeat && event === 'keydown') {
         if (key.getAttribute('data-direction') === 'left') {
           const leftShift = document.querySelector('.LShift');
-          if (leftShift.classList.contains('active') && document.querySelectorAll('.system.active').length === 2) {
+          if (leftShift.classList.contains('active') && checkActiveSystemKeys()) {
             refresh();
           }
         }
