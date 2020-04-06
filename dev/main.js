@@ -178,6 +178,10 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
       break;
     case '32':
       text = [...output.value];
+      if (text.length === 0) {
+        output.value = ' ';
+        break;
+      }
       cursorPos = getCursorPos(output);
       text.map((c, ind) => {
         newtext.push(c);
