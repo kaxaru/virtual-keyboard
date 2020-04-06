@@ -39,8 +39,6 @@ const refresh = () => {
   });
 };
 
-// init();
-
 const changeRegister = (active = true) => {
   const attr = (active) ? 'data-upreg' : 'data-downreg';
   const els = Array.from(document.querySelectorAll(`.key[${attr}]`));
