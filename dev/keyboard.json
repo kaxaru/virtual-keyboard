@@ -11,70 +11,70 @@
             },
             "key49":{
                "datakey":49,
-               "class":"key",
+               "class":"key, number",
                "value":"1",
                "dReg":"1",
                "upReg":"!"
             },
             "key50":{
                "datakey":50,
-               "class":"key",
+               "class":"key, number",
                "value":"2",
                "dReg":"2",
                "upReg":"@"
             },
             "key61":{
                "datakey":51,
-               "class":"key",
+               "class":"key, number",
                "value":"3",
                "dReg":"3",
                "upReg":"#"
             },
             "key52":{
                "datakey":52,
-               "class":"key",
+               "class":"key, number",
                "value":"4",
                "dReg":"4",
                "upReg":"$"
             },
             "key53":{
                "datakey":53,
-               "class":"key",
+               "class":"key, number",
                "value":"5",
                "dReg":"5",
                "upReg":"%"
             },
             "key54":{
                "datakey":54,
-               "class":"key",
+               "class":"key, number",
                "value":"6",
                "dReg":"6",
                "upReg":"^"
             },
             "key55":{
                "datakey":"55",
-               "class":"key",
+               "class":"key, number",
                "value":"7",
                "dReg":"7",
                "upReg":"&"
             },
             "key56":{
                "datakey":56,
-               "class":"key",
+               "class":"key, number",
                "value":"8",
                "dReg":"8",
                "upReg":"*"
             },
             "key57":{
                "datakey":57,
-               "class":"key",
+               "class":"key, number",
                "value":"9",
                "dReg":"9",
                "upReg":"("
             },
             "key48":{
                "datakey":48,
-               "class":"key",
+               "class":"key, number",
                "value":"0",
                "dReg":"0",
                "upReg":")"
