@@ -2,13 +2,18 @@ const { body } = document;
 body.innerHTML = `<div class='wrapper'>
                     <span class="article">Windows virtual keyboard</span>
                     <span class="legends">Switch language: left shift + left alt</span>
-                    <textarea class="output" name="" id="" cols="30" rows="10"></textarea>
+                    <textarea class="output" name="" id="" cols="30" rows="10" autofocus></textarea>
                     <div class="keyboard"></div>
                  </div>`;
 const keyboard = document.querySelector('.keyboard');
 keyboard.innerHTML = '';
-const LANGKEYS = [16, 20];
-const BLOCKPRINTKEYS = [17, 18];
+const SHIFT = 16;
+const CAPSLOCK = 20;
+const CTRL = 17;
+const ALT = 18;
+
+const LANGKEYS = [SHIFT, CAPSLOCK];
+const BLOCKPRINTKEYS = [CTRL, ALT];
 let lang;
 
 const refresh = () => {
@@ -22,9 +27,9 @@ const refresh = () => {
     },
   }).then((res) => res.json()).then((data) => {
     const sections = Object.keys(data.Lang[lang]);
-    sections.map((s) => {
+    sections.forEach((s) => {
       const keys = Object.keys(data.Lang[lang][s]);
-      keys.map((k) => {
+      keys.forEach((k) => {
         const key = data.Lang[lang][s][k];
         if (!/system/i.test(key.class)) {
           const element = document.querySelector(`.key[data-key="${key.datakey}"]`);
@@ -32,9 +37,7 @@ const refresh = () => {
           element.setAttribute('data-upreg', htmlToChar(key.upReg));
           element.textContent = htmlToChar(key.upReg);
         }
-        return false;
       });
-      return false;
     });
   });
 };
@@ -42,10 +45,15 @@ const refresh = () => {
 const changeRegister = (active = true) => {
   const attr = (active) ? 'data-upreg' : 'data-downreg';
   const els = Array.from(document.querySelectorAll(`.key[${attr}]`));
-  els.map((el) => {
+  els.forEach((el) => {
     const key = el;
-    key.textContent = key.getAttribute(attr);
-    return false;
+    if (el.classList.contains('number')) {
+      key.textContent = key.getAttribute((document.querySelector('.CapsLock').classList.contains('active'))
+        ? (attr === 'data-upreg') ? 'data-downreg' : 'data-upreg'
+        : (attr !== 'data-upreg') ? 'data-downreg' : 'data-upreg');
+    } else {
+      key.textContent = key.getAttribute(attr);
+    }
   });
 };
 
@@ -91,17 +99,16 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
   const isActiveShiftOrCapsLock = () => {
     let capitalLetterEls = [];
     let isCapitalLetters = false;
-    LANGKEYS.map((k) => {
+    LANGKEYS.forEach((k) => {
       capitalLetterEls = [...capitalLetterEls, ...document.querySelectorAll(`.key[data-key="${k}"]`)];
-      return false;
     });
 
     for (let i = 0; i < capitalLetterEls.length; i += 1) {
       if (capitalLetterEls[i].classList.contains('active')) {
-        if (+capitalLetterEls[i].getAttribute('data-key') === 16) {
+        if (+capitalLetterEls[i].getAttribute('data-key') === SHIFT) {
           isCapitalLetters = true;
         }
-        if (+capitalLetterEls[i].getAttribute('data-key') === 20) {
+        if (+capitalLetterEls[i].getAttribute('data-key') === CAPSLOCK) {
           isCapitalLetters = !isCapitalLetters;
         }
       }
@@ -134,12 +141,11 @@ const systemKeyHandling = (key, event, eventRepeat = false) => {
       text = [...output.value];
       cursorPos = getCursorPos(output);
       if (text.length !== 0) {
-        text.map((c, ind) => {
+        text.forEach((c, ind) => {
           newtext.push(c);
           if (ind + 1 === cursorPos) {
             newtext.push('  ');
           }
-          return false;
         });
         text = newtext.join('');
         newtext = [];
@@ -277,15 +283,13 @@ const keyHandling = (key) => {
 
 
   let blockPrintKeysEls = [];
-  BLOCKPRINTKEYS.map((k) => {
+  BLOCKPRINTKEYS.forEach((k) => {
     blockPrintKeysEls = [...blockPrintKeysEls, ...document.querySelectorAll(`.key[data-key="${k}"]`)];
-    return false;
   });
 
   let isButtonPush = false;
-  blockPrintKeysEls.map((k) => {
+  blockPrintKeysEls.forEach((k) => {
     if (k.classList.contains('active')) { isButtonPush = true; }
-    return false;
   });
 
   if (!isButtonPush) {
@@ -314,7 +318,7 @@ window.addEventListener('keydown', (e) => {
   e.preventDefault();
   let key;
 
-  if (e.keyCode === 17 || e.keyCode === 18 || e.keyCode === 16) {
+  if (e.keyCode === CTRL || e.keyCode === ALT || e.keyCode === SHIFT) {
     key = e.location === 1
       ? document.querySelector(`.L${e.key}`)
       : e.key !== 'AltGraph' ? document.querySelector(`.R${e.key}`)
@@ -323,7 +327,7 @@ window.addEventListener('keydown', (e) => {
     key = document.querySelector(`div[data-key="${e.keyCode}"]`);
   }
 
-  if (e.keyCode !== 20) {
+  if (e.keyCode !== CAPSLOCK) {
     if (key.classList !== null) {
       key.classList.add('active');
     }
@@ -338,9 +342,8 @@ window.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('keyup', (e) => {
-  e.preventDefault();
   let key;
-  if (e.keyCode === 17 || e.keyCode === 18 || e.keyCode === 16) {
+  if (e.keyCode === CTRL || e.keyCode === ALT || e.keyCode === SHIFT) {
     key = e.location === 1
       ? document.querySelector(`.L${e.key}`)
       : e.key !== 'AltGraph' ? document.querySelector(`.R${e.key}`)
@@ -348,7 +351,7 @@ window.addEventListener('keyup', (e) => {
   } else {
     key = document.querySelector(`div[data-key="${e.keyCode}"]`);
   }
-  if (e.keyCode !== 20) {
+  if (e.keyCode !== CAPSLOCK) {
     if (key.classList !== null) {
       key.classList.remove('active');
     }
@@ -391,12 +394,11 @@ const init = () => {
     let keyUpNow = [];
     keys.map((key) => {
       key.addEventListener('mousedown', (e) => {
-        e.preventDefault();
         if (e.target.nodeName === 'TEXTAREA') {
           return false;
         }
         keyUpNow.push(key);
-        if (+key.getAttribute('data-key') !== 20) {
+        if (+key.getAttribute('data-key') !== CAPSLOCK) {
           key.classList.add('active');
         } else {
           key.classList.toggle('active');
@@ -411,9 +413,8 @@ const init = () => {
       });
 
       window.addEventListener('mouseup', (e) => {
-        e.preventDefault();
         keyUpNow.map((k) => {
-          if (+k.getAttribute('data-key') !== 20) {
+          if (+k.getAttribute('data-key') !== CAPSLOCK) {
             k.classList.remove('active');
           }
           return false;
